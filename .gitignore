@@ -1,0 +1,15 @@
+# IDE
+.idea/
+.venv/
+
+# Python
+__pycache__/
+
+# Models
+*.pkl
+
+# Data
+*.csv
+
+# Env
+.env
