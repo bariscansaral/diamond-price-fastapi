@@ -13,6 +13,7 @@ with open("30-diamond_model_completed.pkl","rb") as f:
     encoders=saved_data["encoders"]
     scaler=saved_data["scaler"]
 
+feature_order = ['carat', 'cut', 'color', 'clarity', 'depth', 'table', 'x', 'y', 'z']
 templates=Jinja2Templates(directory="templates")
 
 class DiamondFeatures(BaseModel):
@@ -32,13 +33,15 @@ async def home(request: Request):
 
 @app.post("/predict")
 async def predict(features: DiamondFeatures):
+    print("Raw Data:", features.model_dump())
     input_data=pd.DataFrame([features.model_dump()])
 
     for col in ["cut","color","clarity"]:
         input_data[col]=encoders[col].transform(input_data[col])
 
+    input_data = input_data[feature_order]
     input_scaled=scaler.transform(input_data)
-
+    print(f"Scaled Input: {input_scaled}")
     prediction=model.predict(input_scaled)
 
     return{"prediction":prediction[0]}
